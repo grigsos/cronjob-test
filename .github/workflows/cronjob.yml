@@ -2,7 +2,7 @@ name: Cron CICD
 
 on:
   schedule:
-    - cron: '50 21 * * *' 
+    - cron: '53 20 * * *' 
 
 jobs:
   build-and-push:
