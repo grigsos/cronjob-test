@@ -22,7 +22,7 @@ jobs:
       fail-fast: true
       max-parallel: 1
       matrix:
-        environment: ['dev', 'int', 'prd']
+        environment: ['dev', 'int', 'prd'] 
     steps:
       - name: Echo deploy message for dev or scheduled runs
         if: matrix.environment == 'dev' || github.event_name == 'schedule'
