@@ -8,29 +8,32 @@ on:
     - cron: '0 23 * * *' 
 
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Echo a simple message
-        run: echo "Build step completed."
+        run: echo "Build and push step completed."
 
   deploy:
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [build-and-push]
     strategy:
       fail-fast: true
       max-parallel: 1
       matrix:
         environment: [ 'dev', 'int', 'prd' ]
+    environment: 
+      name: ${{ matrix.environment }}
+      # Conditional for requiring approval in 'int' and 'prd' environments
+      url: ${{ steps.deploy.outputs.url }}
     steps:
       - name: Echo deploy message
         run: |
           echo "Deploying to ${{ matrix.environment }} environment."
-          if [ "${{ matrix.environment }}" = "dev" ] || [ "${{ github.event_name }}" = "schedule" ]; then
+          if [ "${{ matrix.environment }}" == "dev" ] || [ "${{ github.event_name }}" == "schedule" ]; then
             echo "This is a dev environment or a scheduled run."
-            # Add your deployment steps for dev environment here
+            # Deployment steps for dev environment or scheduled runs
           else
-            echo "This is a test environment."
-            # Add your deployment steps for test environment here
-          fi
+            echo "Deployment to ${{ matrix.environment }} requires approval."
+            # Deployment steps for int and prd environments will be initiated after approval
