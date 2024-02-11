@@ -17,10 +17,12 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build
+    needs: [build]
     strategy:
+      fail-fast: true
+      max-parallel: 1
       matrix:
-        environment: ['dev', 'int' , 'prd']
+        environment: [ 'dev', 'int', 'prd' ]
     steps:
       - name: Echo deploy message
         run: |
